@@ -1,10 +1,9 @@
 package com.savadanko.ecommerce.service;
 
+import com.savadanko.ecommerce.exceptions.ResourceNotFoundException;
 import com.savadanko.ecommerce.model.Category;
 import com.savadanko.ecommerce.repositories.CategoryRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class CategoryServiceImpl implements CategoryService{
     public String deleteCategory(Long categoryId) {
         Category savedCategory = categoryRepository
                 .findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));;
 
         categoryRepository.delete(savedCategory);
         return "Category with categoryId: " + categoryId + " deleted successfully";
@@ -40,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService{
     public Category updateCategory(Category category, Long categoryId) {
         Category savedCategory = categoryRepository
                 .findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         savedCategory.setCategoryName(category.getCategoryName());
         return categoryRepository.save(savedCategory);

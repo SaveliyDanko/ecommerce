@@ -13,6 +13,6 @@ public class Category {
     private Long categoryId;
 
     @NotBlank
-    @Size(min = 2)
+    @Size(min = 2, message = "Category name must contain at least 2 characters")
     private String categoryName;
 }
