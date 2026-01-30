@@ -1,5 +1,6 @@
 package com.savadanko.ecommerce.service;
 
+import com.savadanko.ecommerce.exceptions.ApiException;
 import com.savadanko.ecommerce.exceptions.ResourceNotFoundException;
 import com.savadanko.ecommerce.model.Category;
 import com.savadanko.ecommerce.repositories.CategoryRepository;
@@ -22,6 +23,8 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public void createCategory(Category category) {
+        Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
+        if (savedCategory != null) throw new ApiException("Category with name: " + category.getCategoryName() + " already exists");
         categoryRepository.save(category);
     }
 
