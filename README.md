@@ -5,4 +5,5 @@
 3) Логика обработки исключений с помощью GlobalExceptionHandler, @RestControllerAdvice и @ExceptionHandler
 4) Логика создания custom Exceptions для обработки ошибок
 5) Использование JpaRepository и сопутствующих методов для работы с БД
-6) 
+6) Использование DTO Pattern
+7) Использование ModelMapper для маппинга model -> DTO
