@@ -1,7 +1,7 @@
 package com.savadanko.ecommerce.controller;
 
+import com.savadanko.ecommerce.dto.CategoryDTO;
 import com.savadanko.ecommerce.dto.CategoryResponse;
-import com.savadanko.ecommerce.model.Category;
 import com.savadanko.ecommerce.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -24,23 +24,24 @@ public class CategoryController {
     }
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
-        categoryService.createCategory(category);
-        return new ResponseEntity<>("Category added successfully", HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO createdCategoryDTO = categoryService.createCategory(categoryDTO);
+        return new ResponseEntity<>(createdCategoryDTO, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/admin/categories/{categoryId}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId){
-        String status = categoryService.deleteCategory(categoryId);
-        return ResponseEntity.ok(status);
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long categoryId){
+        CategoryDTO deletedCategoryDTO = categoryService.deleteCategory(categoryId);
+        return ResponseEntity.ok(deletedCategoryDTO);
     }
 
 
     @PutMapping("/public/categories/{categoryId}")
-    public ResponseEntity<String> updateCategory(@Valid
-                                                 @RequestBody Category category,
+    public ResponseEntity<CategoryDTO> updateCategory(
+                                                 @Valid
+                                                 @RequestBody CategoryDTO categoryDTO,
                                                  @PathVariable Long categoryId){
-        Category savedCategory = categoryService.updateCategory(category, categoryId);
-        return ResponseEntity.ok("Category with category id: " + savedCategory.getCategoryId() + " updated successfully");
+        CategoryDTO updatedCategoryDTO = categoryService.updateCategory(categoryDTO, categoryId);
+        return ResponseEntity.ok(updatedCategoryDTO);
     }
 }
