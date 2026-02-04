@@ -1,10 +1,9 @@
 package com.savadanko.ecommerce.repositories;
 
-import com.savadanko.ecommerce.model.Category;
+import com.savadanko.ecommerce.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Category findByCategoryName(String name);
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }
