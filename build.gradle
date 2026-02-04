@@ -42,8 +42,10 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-h2console'
 
-	// ModelMapper
-	implementation "org.modelmapper:modelmapper:3.2.6"
+	// MapStruct
+	implementation "org.mapstruct:mapstruct:1.6.3"
+	annotationProcessor"org.mapstruct:mapstruct-processor:1.6.3"
+
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'

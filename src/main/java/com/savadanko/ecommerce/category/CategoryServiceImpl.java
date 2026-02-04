@@ -1,12 +1,11 @@
-package com.savadanko.ecommerce.service;
+package com.savadanko.ecommerce.category;
 
-import com.savadanko.ecommerce.dto.CategoryDTO;
-import com.savadanko.ecommerce.dto.CategoryResponse;
+import com.savadanko.ecommerce.category.dto.CategoryDTO;
+import com.savadanko.ecommerce.category.dto.CategoryResponse;
+import com.savadanko.ecommerce.category.mapper.CategoryMapper;
 import com.savadanko.ecommerce.exceptions.ApiException;
 import com.savadanko.ecommerce.exceptions.ResourceNotFoundException;
-import com.savadanko.ecommerce.model.Category;
-import com.savadanko.ecommerce.repositories.CategoryRepository;
-import org.modelmapper.ModelMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,16 +15,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CategoryServiceImpl implements CategoryService{
+@RequiredArgsConstructor
+public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final ModelMapper modelMapper;
+    private final CategoryMapper mapper;
 
-    public CategoryServiceImpl(
-            CategoryRepository categoryRepository,
-            ModelMapper modelMapper) {
-        this.categoryRepository = categoryRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
@@ -41,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService{
             throw new ApiException("No category created till now");
 
         List<CategoryDTO> categoryDTOS = categories.stream()
-                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .map(mapper::toDto)
                 .toList();
 
 
@@ -59,12 +53,12 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        Category category = modelMapper.map(categoryDTO, Category.class);
+        Category category = mapper.toDomain(categoryDTO);
         Category findedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
         if (findedCategory != null)
             throw new ApiException("Category with name: " + category.getCategoryName() + " already exists");
         Category savedCategory = categoryRepository.save(category);
-        return modelMapper.map(savedCategory, CategoryDTO.class);
+        return mapper.toDto(savedCategory);
     }
 
     @Override
@@ -74,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService{
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         categoryRepository.delete(savedCategory);
-        return modelMapper.map(savedCategory, CategoryDTO.class);
+        return mapper.toDto(savedCategory);
     }
 
     @Override
@@ -84,7 +78,7 @@ public class CategoryServiceImpl implements CategoryService{
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         savedCategory.setCategoryName(categoryDTO.getCategoryName());
-        return modelMapper.map(categoryRepository.save(savedCategory), CategoryDTO.class);
+        return mapper.toDto(categoryRepository.save(savedCategory));
     }
 }
 

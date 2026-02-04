@@ -7,4 +7,6 @@
 5) Использование JpaRepository и сопутствующих методов для работы с БД
 6) Использование DTO Pattern
 7) Использование ModelMapper для маппинга model -> DTO
-8) Использование пагинации (pagination) и сортировки (sorting)
+8) Переход с ModelMapper на MapStruct для повышения производительности и стандартизированности
+9) Использование пагинации (pagination) и сортировки (sorting)
+10) Переход с Package by Layer на Package by Feature архитектуру

@@ -1,9 +1,8 @@
-package com.savadanko.ecommerce.controller;
+package com.savadanko.ecommerce.category;
 
 import com.savadanko.ecommerce.config.AppConstants;
-import com.savadanko.ecommerce.dto.CategoryDTO;
-import com.savadanko.ecommerce.dto.CategoryResponse;
-import com.savadanko.ecommerce.service.CategoryService;
+import com.savadanko.ecommerce.category.dto.CategoryDTO;
+import com.savadanko.ecommerce.category.dto.CategoryResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

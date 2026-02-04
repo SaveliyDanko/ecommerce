@@ -1,7 +1,5 @@
-package com.savadanko.ecommerce.dto;
+package com.savadanko.ecommerce.product.dto;
 
-import com.savadanko.ecommerce.model.Category;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,19 +10,17 @@ import lombok.NoArgsConstructor;
 public class ProductDTO {
     private Long productId;
 
-    private String name;
+    private String productName;
 
-    // private String description;
+    private String description;
 
     private Double discount;
 
     private String image;
 
-    private Double price;
-
     private Integer quantity;
 
-    private Double specialPrice;
+    private Double price;
 
-    // private Category category;
+    private Double specialPrice;
 }

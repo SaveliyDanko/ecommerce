@@ -1,4 +1,4 @@
-package com.savadanko.ecommerce.dto;
+package com.savadanko.ecommerce.category.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

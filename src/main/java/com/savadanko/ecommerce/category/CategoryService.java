@@ -1,7 +1,7 @@
-package com.savadanko.ecommerce.service;
+package com.savadanko.ecommerce.category;
 
-import com.savadanko.ecommerce.dto.CategoryDTO;
-import com.savadanko.ecommerce.dto.CategoryResponse;
+import com.savadanko.ecommerce.category.dto.CategoryDTO;
+import com.savadanko.ecommerce.category.dto.CategoryResponse;
 
 public interface CategoryService {
     CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);

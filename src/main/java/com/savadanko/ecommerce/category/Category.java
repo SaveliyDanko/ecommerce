@@ -1,4 +1,4 @@
-package com.savadanko.ecommerce.model;
+package com.savadanko.ecommerce.category;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

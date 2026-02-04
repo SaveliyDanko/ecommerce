@@ -1,5 +1,6 @@
-package com.savadanko.ecommerce.model;
+package com.savadanko.ecommerce.product;
 
+import com.savadanko.ecommerce.category.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    private String name;
+    private String productName;
 
     private String description;
 

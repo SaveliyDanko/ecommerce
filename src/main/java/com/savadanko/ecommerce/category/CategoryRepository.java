@@ -1,6 +1,5 @@
-package com.savadanko.ecommerce.repositories;
+package com.savadanko.ecommerce.category;
 
-import com.savadanko.ecommerce.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
