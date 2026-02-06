@@ -3,8 +3,9 @@ package com.savadanko.ecommerce.product;
 import com.savadanko.ecommerce.exceptions.ResourceNotFoundException;
 import com.savadanko.ecommerce.category.Category;
 import com.savadanko.ecommerce.category.CategoryRepository;
-import com.savadanko.ecommerce.product.dto.ProductDTO;
+import com.savadanko.ecommerce.product.dto.ProductResponse;
 import com.savadanko.ecommerce.product.dto.ProductList;
+import com.savadanko.ecommerce.product.dto.ProductRequest;
 import com.savadanko.ecommerce.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,17 +20,19 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper mapper;
 
     @Override
-    public ProductDTO addProduct(Product product, Long categoryId) {
+    public ProductResponse addProduct(ProductRequest productRequest, Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
+
+        Product product = mapper.toDomain(productRequest);
 
         product.setCategory(category);
 
         product.setImage("default.png");
 
         double specialPrice = product.getPrice() - (product.getDiscount() * 0.01) * product.getPrice();
-        product.setSpecialPrice(specialPrice);
 
+        product.setSpecialPrice(specialPrice);
 
         Product savedProduct = productRepository.save(product);
 
@@ -38,37 +41,60 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductList getAllProducts() {
-        ProductList productList = new ProductList();
-        productList.setContent(productRepository.findAll().stream().map(mapper::toDto).toList());
-        return productList;
+        List<Product> products = productRepository.findAll();
+
+        List<ProductResponse> productResponses = products.stream().map(mapper::toDto).toList();
+
+        return new ProductList(productResponses);
     }
 
     @Override
     public ProductList searchByCategory(Long categoryId) {
-        ProductList productList = new ProductList();
-
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
-        List<ProductDTO> productDTOS = productRepository.findByCategoryOrderByPriceAsc(category).stream()
+        List<Product> products = productRepository.findByCategoryOrderByPriceAsc(category);
+
+        List<ProductResponse> productResponses = products.stream()
                 .map(mapper::toDto)
                 .toList();
 
-        productList.setContent(productDTOS);
-
-        return productList;
+        return new ProductList(productResponses);
     }
 
     @Override
     public ProductList searchByKeyword(String keyword) {
-        ProductList productList = new ProductList();
+        List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
 
-        List<ProductDTO> productDTOS = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%').stream()
+        List<ProductResponse> productResponses = products.stream()
                 .map(mapper::toDto)
                 .toList();
 
-        productList.setContent(productDTOS);
+        return new ProductList(productResponses);
+    }
 
-        return productList;
+    @Override
+    public ProductResponse updateProduct(ProductRequest productRequest, Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "product id", productId));
+
+        mapper.updateEntityFromDto(productRequest, product);
+
+        product.setImage("default.png");
+
+        double specialPrice = product.getPrice() - (product.getDiscount() * 0.01) * product.getPrice();
+        product.setSpecialPrice(specialPrice);
+
+        return mapper.toDto(productRepository.save(product));
+    }
+
+    @Override
+    public ProductResponse deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "product id", productId));
+
+        productRepository.delete(product);
+
+        return mapper.toDto(product);
     }
 }

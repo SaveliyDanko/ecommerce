@@ -1,7 +1,8 @@
 package com.savadanko.ecommerce.product;
 
-import com.savadanko.ecommerce.product.dto.ProductDTO;
+import com.savadanko.ecommerce.product.dto.ProductResponse;
 import com.savadanko.ecommerce.product.dto.ProductList;
+import com.savadanko.ecommerce.product.dto.ProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +14,11 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDTO> addProduct(
-            @RequestBody Product product,
+    public ResponseEntity<ProductResponse> addProduct(
+            @RequestBody ProductRequest product,
             @PathVariable Long categoryId)
     {
-        ProductDTO response = productService.addProduct(product, categoryId);
+        ProductResponse response = productService.addProduct(product, categoryId);
         return ResponseEntity.ok(response);
     }
 
@@ -36,5 +37,19 @@ public class ProductController {
     public ResponseEntity<ProductList> getProductsByKeyword(@PathVariable String keyword) {
         ProductList productList = productService.searchByKeyword(keyword);
         return ResponseEntity.ok(productList);
+    }
+
+    @PutMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductResponse> updateProduct(@RequestBody ProductRequest product,
+                                                         @PathVariable Long productId) {
+
+        ProductResponse productResponse = productService.updateProduct(product, productId);
+        return ResponseEntity.ok(productResponse);
+    }
+
+    @DeleteMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductResponse> deleteProduct(@PathVariable Long productId) {
+        ProductResponse productResponse = productService.deleteProduct(productId);
+        return ResponseEntity.ok(productResponse);
     }
 }

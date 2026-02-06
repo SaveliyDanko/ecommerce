@@ -9,3 +9,4 @@
 7) Использование MapStruct для маппинга model -> DTO
 8) Использование пагинации (pagination) и сортировки (sorting)
 9) Переход с Package by Layer на Package by Feature архитектуру
+10) Добавление поиска сущностей по keyword
