@@ -3,13 +3,14 @@ package com.savadanko.ecommerce.product;
 import com.savadanko.ecommerce.exceptions.ResourceNotFoundException;
 import com.savadanko.ecommerce.category.Category;
 import com.savadanko.ecommerce.category.CategoryRepository;
+import com.savadanko.ecommerce.file.FileService;
 import com.savadanko.ecommerce.product.dto.ProductResponse;
 import com.savadanko.ecommerce.product.dto.ProductList;
 import com.savadanko.ecommerce.product.dto.ProductRequest;
 import com.savadanko.ecommerce.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Service
@@ -17,6 +18,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final FileService fileService;
     private final ProductMapper mapper;
 
     @Override
@@ -96,5 +98,17 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(product);
 
         return mapper.toDto(product);
+    }
+
+    @Override
+    public ProductResponse updateProductImage(Long productId, MultipartFile imageFile) {
+        Product product = productRepository.findById(productId).
+                orElseThrow(() -> new ResourceNotFoundException("Product", "product id", productId));
+
+        String fileName = fileService.uploadFile(imageFile);
+
+        product.setImage(fileName);
+
+        return mapper.toDto(productRepository.save(product));
     }
 }

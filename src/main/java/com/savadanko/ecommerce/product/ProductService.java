@@ -4,6 +4,7 @@ import com.savadanko.ecommerce.product.dto.ProductResponse;
 import com.savadanko.ecommerce.product.dto.ProductList;
 import com.savadanko.ecommerce.product.dto.ProductRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface ProductService {
@@ -18,4 +19,6 @@ public interface ProductService {
     ProductResponse updateProduct(ProductRequest product, Long productId);
 
     ProductResponse deleteProduct(Long productId);
+
+    ProductResponse updateProductImage(Long Id, MultipartFile image);
 }

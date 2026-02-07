@@ -6,6 +6,7 @@ import com.savadanko.ecommerce.product.dto.ProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -50,6 +51,13 @@ public class ProductController {
     @DeleteMapping("/admin/products/{productId}")
     public ResponseEntity<ProductResponse> deleteProduct(@PathVariable Long productId) {
         ProductResponse productResponse = productService.deleteProduct(productId);
+        return ResponseEntity.ok(productResponse);
+    }
+
+    @PutMapping("/products/{productId}/image")
+    public ResponseEntity<ProductResponse> updateProductImage(@PathVariable Long productId,
+                                                              @RequestParam("image") MultipartFile image) {
+        ProductResponse productResponse = productService.updateProductImage(productId, image);
         return ResponseEntity.ok(productResponse);
     }
 }

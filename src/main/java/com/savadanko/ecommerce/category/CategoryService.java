@@ -1,14 +1,15 @@
 package com.savadanko.ecommerce.category;
 
-import com.savadanko.ecommerce.category.dto.CategoryDTO;
 import com.savadanko.ecommerce.category.dto.CategoryResponse;
+import com.savadanko.ecommerce.category.dto.CategoryRequest;
+import com.savadanko.ecommerce.category.dto.CategoryList;
 
 public interface CategoryService {
-    CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
+    CategoryList getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
 
-    CategoryDTO createCategory(CategoryDTO category);
+    CategoryResponse createCategory(CategoryRequest category);
 
-    CategoryDTO deleteCategory(Long categoryId);
+    CategoryResponse deleteCategory(Long categoryId);
 
-    CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryId);
+    CategoryResponse updateCategory(CategoryRequest categoryDTO, Long categoryId);
 }

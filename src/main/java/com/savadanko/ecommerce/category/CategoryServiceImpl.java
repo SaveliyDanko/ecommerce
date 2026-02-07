@@ -1,7 +1,8 @@
 package com.savadanko.ecommerce.category;
 
-import com.savadanko.ecommerce.category.dto.CategoryDTO;
 import com.savadanko.ecommerce.category.dto.CategoryResponse;
+import com.savadanko.ecommerce.category.dto.CategoryRequest;
+import com.savadanko.ecommerce.category.dto.CategoryList;
 import com.savadanko.ecommerce.category.mapper.CategoryMapper;
 import com.savadanko.ecommerce.exceptions.ApiException;
 import com.savadanko.ecommerce.exceptions.ResourceNotFoundException;
@@ -22,7 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public CategoryList getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -34,26 +35,26 @@ public class CategoryServiceImpl implements CategoryService {
         if (categories.isEmpty())
             throw new ApiException("No category created till now");
 
-        List<CategoryDTO> categoryDTOS = categories.stream()
+        List<CategoryResponse> categoryResponses = categories.stream()
                 .map(mapper::toDto)
                 .toList();
 
 
         // Build Response
-        CategoryResponse categoryResponse = new CategoryResponse();
-        categoryResponse.setContent(categoryDTOS);
-        categoryResponse.setPageNumber(categoryPage.getNumber());
-        categoryResponse.setPageSize(categoryPage.getSize());
-        categoryResponse.setTotalElements(categoryPage.getTotalElements());
-        categoryResponse.setTotalPages(categoryPage.getTotalPages());
-        categoryResponse.setLastPage(categoryPage.isLast());
+        CategoryList categoryList = new CategoryList();
+        categoryList.setContent(categoryResponses);
+        categoryList.setPageNumber(categoryPage.getNumber());
+        categoryList.setPageSize(categoryPage.getSize());
+        categoryList.setTotalElements(categoryPage.getTotalElements());
+        categoryList.setTotalPages(categoryPage.getTotalPages());
+        categoryList.setLastPage(categoryPage.isLast());
 
-        return categoryResponse;
+        return categoryList;
     }
 
     @Override
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        Category category = mapper.toDomain(categoryDTO);
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
+        Category category = mapper.toDomain(categoryRequest);
         Category findedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
         if (findedCategory != null)
             throw new ApiException("Category with name: " + category.getCategoryName() + " already exists");
@@ -62,7 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO deleteCategory(Long categoryId) {
+    public CategoryResponse deleteCategory(Long categoryId) {
         Category savedCategory = categoryRepository
                 .findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
@@ -72,13 +73,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryId) {
-        Category savedCategory = categoryRepository
+    public CategoryResponse updateCategory(CategoryRequest categoryRequest, Long categoryId) {
+        Category category = categoryRepository
                 .findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
-        savedCategory.setCategoryName(categoryDTO.getCategoryName());
-        return mapper.toDto(categoryRepository.save(savedCategory));
+        mapper.updateEntityFromDto(categoryRequest, category);
+
+        return mapper.toDto(categoryRepository.save(category));
     }
 }
 
