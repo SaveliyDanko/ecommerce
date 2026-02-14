@@ -1,5 +1,6 @@
 package com.savadanko.ecommerce.product;
 
+import com.savadanko.ecommerce.exceptions.ApiException;
 import com.savadanko.ecommerce.exceptions.ResourceNotFoundException;
 import com.savadanko.ecommerce.category.Category;
 import com.savadanko.ecommerce.category.CategoryRepository;
@@ -9,6 +10,10 @@ import com.savadanko.ecommerce.product.dto.ProductList;
 import com.savadanko.ecommerce.product.dto.ProductRequest;
 import com.savadanko.ecommerce.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -28,6 +33,12 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = mapper.toDomain(productRequest);
 
+        boolean productExists = productRepository.existsByProductNameAndCategory(productRequest.getProductName(), category);
+
+        if (productExists) {
+            throw new ApiException("Product with name '" + productRequest.getProductName() + "' already exists in this category.");
+        }
+
         product.setCategory(category);
 
         product.setImage("default.png");
@@ -42,37 +53,88 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductList getAllProducts() {
-        List<Product> products = productRepository.findAll();
+    public ProductList getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Product> productPage = productRepository.findAll(pageDetails);
+
+        List<Product> products = productPage.getContent();
+
+        if (products.isEmpty())
+            throw new ApiException("No product created till now");
 
         List<ProductResponse> productResponses = products.stream().map(mapper::toDto).toList();
 
-        return new ProductList(productResponses);
+        ProductList productList = new ProductList();
+        productList.setContent(productResponses);
+        productList.setPageNumber(pageNumber);
+        productList.setPageSize(pageSize);
+        productList.setTotalElements(productPage.getTotalElements());
+        productList.setTotalPages(productPage.getTotalPages());
+        productList.setLastPage(productPage.isLast());
+
+        return productList;
     }
 
     @Override
-    public ProductList searchByCategory(Long categoryId) {
+    public ProductList searchByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
-        List<Product> products = productRepository.findByCategoryOrderByPriceAsc(category);
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Product> productPage = productRepository.findByCategoryOrderByPriceAsc(category, pageDetails);
+
+        List<Product> products = productPage.getContent();
 
         List<ProductResponse> productResponses = products.stream()
                 .map(mapper::toDto)
                 .toList();
 
-        return new ProductList(productResponses);
+        ProductList productList = new ProductList();
+        productList.setContent(productResponses);
+        productList.setPageNumber(pageNumber);
+        productList.setPageSize(pageSize);
+        productList.setTotalElements(productPage.getTotalElements());
+        productList.setTotalPages(productPage.getTotalPages());
+        productList.setLastPage(productPage.isLast());
+
+        return productList;
     }
 
     @Override
-    public ProductList searchByKeyword(String keyword) {
-        List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
+    public ProductList searchByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Product> productPage = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%', pageDetails);
+
+        List<Product> products = productPage.getContent();
 
         List<ProductResponse> productResponses = products.stream()
                 .map(mapper::toDto)
                 .toList();
 
-        return new ProductList(productResponses);
+        ProductList productList = new ProductList();
+        productList.setContent(productResponses);
+        productList.setPageNumber(pageNumber);
+        productList.setPageSize(pageSize);
+        productList.setTotalElements(productPage.getTotalElements());
+        productList.setTotalPages(productPage.getTotalPages());
+        productList.setLastPage(productPage.isLast());
+
+        return productList;
     }
 
     @Override

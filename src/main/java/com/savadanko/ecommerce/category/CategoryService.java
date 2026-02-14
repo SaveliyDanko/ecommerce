@@ -5,7 +5,7 @@ import com.savadanko.ecommerce.category.dto.CategoryRequest;
 import com.savadanko.ecommerce.category.dto.CategoryList;
 
 public interface CategoryService {
-    CategoryList getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
+    CategoryList getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     CategoryResponse createCategory(CategoryRequest category);
 
